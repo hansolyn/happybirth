@@ -5,7 +5,7 @@ const st={ov:{},cur:null},COL={sEarly:'#5DADE2',sLate:'#2BA8A2',sAll:'#2BA8A2',l
 const MAP={sEarly:['sEarlyS','sEarlyE'],sLate:['sLateS','sLateE'],sAll:['sAllS','sAllE'],leave:['lStart','lEnd'],parental:['pStart','pEnd']};
 const v=id=>$('#'+id).value,c=id=>$('#'+id).checked;
 const collect=()=>({edd:v('edd'),birth:v('birth'),multiple:v('multiple')==='1',premature:c('prem'),highRisk:c('hr'),
- months:v('months'),linked:c('linked'),hours:v('hours'),...(M.hr?M.hr.read():{})});
+ months:v('months'),linked:c('linked'),...(M.hr?M.hr.read():{})});
 function render(){const i=collect(),r=M.calc(i,st.ov);st.cur={i,r};
  $('#res').hidden=!r.ok;if(!r.ok){alert(r.warnings[0]);return}
  const L=r.rows.find(x=>x.key==='leave'),P=r.rows.find(x=>x.key==='parental');
@@ -19,7 +19,7 @@ function render(){const i=collect(),r=M.calc(i,st.ov);st.cur={i,r};
  $('#tl').innerHTML=`<div class=tlw><div class=tl>${tk.map(([d,y,m],n)=>`<div class=tk style="left:${pc(d)}%"><span>${n===0||m===1?y+'.'+String(m).padStart(2,'0'):m+'월'}</span></div>`).join('')}${r.rows.map(x=>`<div class=tr><div class=tb data-k="${x.key}" title="${x.start}~${x.end}" style="left:${pc(x.start)}%;width:${Math.max(pc(x.end)-pc(x.start),1.2)}%;background:${COL[x.key]}">${esc(x.label)}</div></div>`).join('')}<div class=edd style="left:${pc(i.edd)}%" title="출산예정일 ${i.edd}"></div></div></div>`;
  // 막대 안에 글자가 다 들어가지 않을 때만 막대 오른쪽에 이름 표시
  $('#tl').querySelectorAll('.tb').forEach(b=>{if(b.scrollWidth>b.clientWidth){const t=b.textContent,p=document.createElement('span');b.textContent='';p.className='tbo';p.dataset.k=b.dataset.k;p.textContent=t;p.style.left=(b.offsetLeft+b.offsetWidth+6)+'px';b.parentNode.appendChild(p)}});
- $('#tbody').innerHTML=r.rows.map(x=>`<tr><td>${esc(x.label)}</td><td>${x.start}</td><td>${x.end}</td><td>${x.key==='parental'?esc(i.months)+'개월':x.days+'일'}</td><td class="${x.manual?'man':'auto'}">${x.manual?'수동 수정':'자동'}</td><td>${esc(x.basis)}</td><td><button class=sec data-k="${x.key}">수정</button></td></tr>`).join('');
+ $('#tbody').innerHTML=r.rows.map(x=>`<tr><td>${esc(x.label)}</td><td>${x.start}</td><td>${x.end}</td><td>${x.key==='parental'?esc(i.months)+'개월':x.days+'일'}</td><td class="${x.manual?'man':'auto'}">${x.manual?'수동 수정':'자동'}</td><td>${esc(x.basis)}${['sEarly','sLate','sAll'].includes(x.key)?'*':''}</td><td><button class=sec data-k="${x.key}">수정</button></td></tr>`).join('');
  if(M.hr)M.hr.render(r,i,st);}
 function edit(k){const x=st.cur.r.rows.find(y=>y.key===k),[ks,ke]=MAP[k];$('#dl-t').textContent=x.label+' 수정';$('#d-s').value=x.start;$('#d-e').value=x.end;
  $('#d-sg').innerHTML=x.suggest?`권고(실제 출산일 기준): ${x.suggest.start} ~ ${x.suggest.end} <button type=button class=sec id=sg>권고안 적용</button>`:'';
@@ -33,6 +33,6 @@ function edit(k){const x=st.cur.r.rows.find(y=>y.key===k),[ks,ke]=MAP[k];$('#dl-
  $('#d-reset').onclick=()=>{delete st.ov[ks];delete st.ov[ke];$('#dlg').close();render()}}
 document.addEventListener('click',e=>{const k=e.target.closest('[data-k]');if(k)edit(k.dataset.k)});
 $('#go').onclick=()=>{st.ov={};render()};
-['edd','birth','multiple','prem','hr','months','linked','hours'].forEach(id=>$('#'+id).addEventListener('change',()=>{if(!$('#res').hidden){if(['edd','multiple','months'].includes(id))st.ov={};render()}}));
+['edd','birth','multiple','prem','hr','months','linked'].forEach(id=>$('#'+id).addEventListener('change',()=>{if(!$('#res').hidden){if(['edd','multiple','months'].includes(id))st.ov={};render()}}));
 if(M.hr)M.hr.init(render);
 $('#upd').textContent='최종 업데이트 '+M.REG.updated.replace(/-/g,'.');})();

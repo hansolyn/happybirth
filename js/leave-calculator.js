@@ -1,5 +1,5 @@
 // 임신기 단축·출산전후휴가·육아휴직 계산 엔진 (UI 무관, 순수 함수)
-// i: {edd,birth,multiple,premature,highRisk,wk,wd,wref,months,linked,hours}  ov: 수동수정값
+// i: {edd,birth,multiple,premature,highRisk,wk,wd,wref,months,linked}  ov: 수동수정값
 (function(g){const M=g.MP=g.MP||{},D=M.date,R=M.REG;
 M.calc=function(i,ov){ov=ov||{};const W=[],rows=[];
  if(!D.valid(i.edd))return{rows:[],warnings:['출산예정일을 입력하세요.'],ok:false};
@@ -11,12 +11,12 @@ M.calc=function(i,ov){ov=ov||{};const W=[],rows=[];
  const eddLmp=D.add(i.edd,-R.pregnancy.edd2lmp);let lmp=eddLmp;
  if(D.valid(i.wref)&&i.wk!==''&&i.wk!=null){lmp=D.add(i.wref,-(Number(i.wk)*7+Number(i.wd||0)));
   const df=D.diff(eddLmp,lmp);if(df!==0)W.push(`입력한 임신 주수 기준 임신 시작일이 예정일 역산(280일)보다 ${Math.abs(df)}일 ${df>0?'늦습니다':'빠릅니다'}. 의료기관 확인 주수를 우선 적용했습니다.`);}
- const sEnd=D.add(lS,-1),P=R.pregnancy,hrs=Number(i.hours)>=8?'1일 2시간 단축':'1일 근로시간 6시간까지 단축 허용 가능';
+ const sEnd=D.add(lS,-1),P=R.pregnancy;
  const row=(key,label,s,e,basis,man,extra)=>rows.push(Object.assign({key,label,start:s,end:e,days:D.days(s,e),basis,manual:!!man},extra||{}));
  if(i.highRisk){W.push('고위험 임신: 의사 진단 등 법정 요건 확인 전에는 확정되지 않습니다. 진단서·질환 확인 후 적용하세요.');
-  row('sAll','임신기 근로시간 단축(고위험: 전 기간)',ov.sAllS||lmp,ov.sAllE||sEnd,`임신 전 기간(의사 진단 시) · ${hrs}`,ov.sAllS||ov.sAllE);}
- else{row('sEarly','임신기 근로시간 단축(초기)',ov.sEarlyS||lmp,ov.sEarlyE||D.add(lmp,P.earlyEndDay),`임신 12주 이내(임신 84일까지) · ${hrs}`,ov.sEarlyS||ov.sEarlyE);
-  row('sLate','임신기 근로시간 단축(후기)',ov.sLateS||D.add(lmp,P.lateStartDay),ov.sLateE||sEnd,`임신 32주 이후(임신 31주 1일=218일째부터) · ${hrs}`,ov.sLateS||ov.sLateE);}
+  row('sAll','임신기 근로시간 단축(고위험: 전 기간)',ov.sAllS||lmp,ov.sAllE||sEnd,`임신 전 기간(의사 진단 시) · 1일 2시간 단축`,ov.sAllS||ov.sAllE);}
+ else{row('sEarly','임신기 근로시간 단축(초기)',ov.sEarlyS||lmp,ov.sEarlyE||D.add(lmp,P.earlyEndDay),`임신 12주 이내(임신 84일까지) · 1일 2시간 단축`,ov.sEarlyS||ov.sEarlyE);
+  row('sLate','임신기 근로시간 단축(후기)',ov.sLateS||D.add(lmp,P.lateStartDay),ov.sLateE||sEnd,`임신 32주 이후(임신 31주 1일=218일째부터) · 1일 2시간 단축`,ov.sLateS||ov.sLateE);}
  row('leave','출산전후휴가',lS,lE,`${r.label} 총 ${r.total}일, 출산 후 ${r.post}일 이상 확보`,ov.lStart||ov.lEnd,{note:R.law.main});
  const hasB=D.valid(i.birth),ref=hasB?i.birth:i.edd,bs=hasB?'실제 출산일':'출산예정일',post=D.diff(ref,lE),early=D.diff(lS,ref)<0;
  const chk={post,min:r.post,basis:bs,ok:post>=r.post&&!early};
