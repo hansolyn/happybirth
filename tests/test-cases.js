@@ -1,0 +1,37 @@
+// 실행: node tests/test-cases.js
+['date-utils','regulations','leave-calculator'].forEach(f=>require('../js/'+f+'.js'));
+const M=globalThis.MP,D=M.date;let pass=0,fail=0;
+const eq=(n,a,b)=>{if(JSON.stringify(a)===JSON.stringify(b)){pass++;console.log('PASS',n)}else{fail++;console.log('FAIL',n,'got',JSON.stringify(a),'want',JSON.stringify(b))}};
+const base={edd:'2027-06-30',multiple:false,months:12,linked:true};
+const get=(r,k)=>r.rows.find(x=>x.key===k);
+let r=M.calc(base);let L=get(r,'leave'),P=get(r,'parental');
+eq('1 단태아 90일',[L.days,L.start,L.end],[90,'2027-05-17','2027-08-14']);
+eq('1-b 출산 후 45일',D.diff(base.edd,L.end),45);
+eq('육아휴직 예시(기획서 4-2)',[P.start,P.end],['2027-08-15','2028-08-14']);
+r=M.calc({...base,multiple:true});L=get(r,'leave');
+eq('2 다태아 120일',[L.days,D.diff(base.edd,L.end)],[120,60]);
+r=M.calc({...base,premature:true,birth:'2027-06-10'});L=get(r,'leave');
+eq('3 미숙아 100일',L.days,100);eq('3-b 미숙아 출산 후 확보>=45',D.diff('2027-06-10',L.end)>=45,true);
+r=M.calc({...base,premature:true});eq('3-c 출산일 없으면 90일 유지',get(r,'leave').days,90);
+r=M.calc({...base,birth:'2027-06-30'});eq('4 예정일=출산일',[get(r,'leave').days,!!get(r,'leave').suggest],[90,false]);
+r=M.calc({...base,birth:'2027-06-01'});eq('5 조기출산 정상',!!get(r,'leave').suggest,false);
+r=M.calc({...base,birth:'2027-07-20'});eq('6 지연출산→권고',get(r,'leave').suggest,{start:'2027-06-06',end:'2027-09-03'});
+r=M.calc({...base,birth:'2027-05-10'});eq('5-b 휴가 시작 전 출산→권고',get(r,'leave').suggest.start,'2027-05-10');
+r=M.calc(base,{lEnd:'2027-08-31'});eq('7 휴가종료 수정→육아시작 연동',get(r,'parental').start,'2027-09-01');
+r=M.calc(base,{pStart:'2027-09-01'});eq('8 육아시작 수정→종료 재계산',get(r,'parental').end,'2028-08-31');
+r=M.calc(base,{pEnd:'2028-12-31'});eq('9 육아종료 수동 유지',[get(r,'parental').end,get(r,'parental').manual],['2028-12-31',true]);
+r=M.calc(base);eq('10-a 일반: 초기84일/후기 218일째',[get(r,'sEarly').end,get(r,'sLate').start],[D.add(r.lmp,84),D.add(r.lmp,218)]);
+r=M.calc({...base,highRisk:true});eq('10-b 고위험: 전기간 1건',[!!get(r,'sAll'),!!get(r,'sEarly')],[true,false]);
+r=M.calc({...base,wk:'20',wd:'3',wref:'2027-02-01'});eq('11 주수 입력→예정일 역산과 차이 경고',r.warnings.some(w=>w.includes('임신 주수')),true);
+eq('윤달 월말 처리',D.addMonths('2027-01-31',1),'2027-02-28');
+eq('날짜 검증',[D.valid('2027-02-30'),D.valid('2028-02-29')],[false,true]);
+r=M.calc(base);eq('12 기본: 출산 후 45일 충족(예정일 기준)',[r.chk.ok,r.chk.post,r.chk.basis],[true,45,'출산예정일']);
+r=M.calc(base,{lEnd:'2027-07-31'});eq('13 휴가 종료 단축→미달 경고',[r.chk.ok,r.chk.post,!!get(r,'leave').suggest],[false,31,true]);
+r=M.calc({...base,multiple:true});eq('14 다태아 최소 60일',[r.chk.ok,r.chk.min],[true,60]);
+r=M.calc({...base,multiple:true},{lEnd:'2027-08-14'});eq('14-b 다태아 45일만 확보→미달',[r.chk.ok,r.chk.post],[false,45]);
+r=M.calc({...base,birth:'2027-07-20'});eq('15 실제 출산일 우선 기준',[r.chk.basis,r.chk.ok,r.chk.post],['실제 출산일',false,25]);
+{const x=M.calc({...base,birth:'2027-07-20'}),g=x.rows.find(y=>y.key==='leave').suggest;eq('16 권고안 총 90일',D.days(g.start,g.end),90);
+ const y=M.calc({...base,multiple:true,birth:'2027-08-10'}),h=y.rows.find(z=>z.key==='leave').suggest;eq('16-b 다태아 권고안 총 120일·출산 후 60일',[D.days(h.start,h.end),D.diff('2027-08-10',h.end)],[120,60]);
+ const z=M.calc(base,{lEnd:'2027-07-31'}),k=z.rows.find(q=>q.key==='leave').suggest;eq('16-c 종료일 단축 권고',[k.start,k.end,D.days(k.start,k.end)],['2027-05-17','2027-08-14',90]);
+ const e=M.calc({...base,birth:'2027-05-10'}),w=e.rows.find(q=>q.key==='leave').suggest;eq('16-d 휴가 시작 전 출산 권고',[w.start,D.days(w.start,w.end)],['2027-05-10',90])}
+console.log(`\n${pass} passed, ${fail} failed`);process.exit(fail?1:0);
