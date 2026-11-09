@@ -32,12 +32,13 @@ function draw(){const items=cur.items;items.sort((a,b)=>eff(a).localeCompare(eff
  $('#cl').innerHTML=`<table><tr><th>완료</th><th>분류</th><th>업무</th><th>예정일(내부 목표)</th><th>근거</th></tr>`+items.map((x,n)=>`<tr${x.o.done?' style="opacity:.55"':''}><td><input type=checkbox data-c="${n}" data-f=done${x.o.done?' checked':''}></td><td>${x.cat}</td><td><b>${esc(x.name)}</b><br><span class=note>${esc(x.desc)}</span></td><td><input type=date data-c="${n}" data-f=date value="${eff(x)}"></td><td>${x.link?`<a href="${x.link}" target=_blank rel=noopener>링크</a>`:''}</td></tr>`).join('')+'</table>';
  $('#cl').onchange=e=>{const d=e.target.dataset;if(d.c==null)return;const it=items[d.c];if(d.f==='done'){it.o.done=e.target.checked;draw()}else if(D.valid(e.target.value)){it.o.date=e.target.value;draw()}}}
 M.hr={
- init(render){$('#hrf').innerHTML=`<label>직원명<input id=name></label><label>부서<input id=dept></label>`;$('#hrf2').innerHTML=`<label>기업 유형*<select id=corp><option>우선지원대상기업</option><option>그 외</option></select></label>`;
+ init(render){$('#hrf').innerHTML=`<label>직원명<input id=name></label><label>부서<input id=dept></label>`;
   $('#hrx').innerHTML=`<button class=or id=xl>엑셀 다운로드</button>`;
-  $('#xl').onclick=()=>M.excel(cur);['name','dept','corp'].forEach(id=>$('#'+id).addEventListener('change',()=>$('#res').hidden||render()))},
- read:()=>({name:$('#name').value,dept:$('#dept').value,corp:$('#corp').value}),
+  $('#xl').onclick=()=>M.excel(cur);['name','dept'].forEach(id=>$('#'+id).addEventListener('change',()=>$('#res').hidden||render()))},
+ read:()=>({name:$('#name').value,dept:$('#dept').value}),
  render(r,i,st){cur={r,i,items:build(r,i)};draw();
-  $('#ref').innerHTML=`<ul><li>적용 기준일: ${esc(R.asOf)}</li><li>${esc(R.law.main)} — <a href="${R.law.mainUrl}" target=_blank rel=noopener>국가법령정보센터</a></li>
-  <li>임신기 단축 개정(2025.2.23.) 안내 — <a href="${R.law.shortUrl}" target=_blank rel=noopener>정책브리핑</a></li><li>미숙아 범위 — <a href="${R.law.premUrl}" target=_blank rel=noopener>${esc(R.law.prem)}</a></li>
+  $('#ref').innerHTML=`<ul><li>${esc(R.law.main)} — 반드시 <a href="${R.law.mainUrl}" target=_blank rel=noopener>국가법령정보센터</a>에서 최신 개정 확인</li>
+  <li>임신기 단축 개정(2025.2.23.) 안내 — <a href="${R.law.shortUrl}" target=_blank rel=noopener>정책브리핑</a></li><li>미숙아 범위 — ${esc(R.law.prem)}</li>
+  <li><a href="https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ04&systClId=SC00000033&currentPageNo=1&recordCountPerPage=9#none" target=_blank rel=noopener>고용24 정책/제도 안내</a></li>
   <li>급여 상한액·지원금 금액·4대 보험 신고기한은 고시·공단 안내가 수시 변경되므로 이 도구에 고정하지 않았습니다. <a href="${R.law.moel}" target=_blank rel=noopener>고용노동부</a> 및 각 보험 공단 최신 안내 확인.</li></ul>`}};
 M.hrItems=()=>cur;})();

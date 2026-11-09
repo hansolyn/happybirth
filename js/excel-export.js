@@ -3,7 +3,7 @@
 M.excel=function(cur){if(!cur||!window.XLSX){alert('일정을 먼저 생성하세요 (또는 SheetJS 로드 실패).');return}
  const X=XLSX,{r,i,items}=cur,dt=s=>({t:'n',v:D.serial(s),z:'yyyy-mm-dd'}),g=k=>r.rows.find(x=>x.key===k),L=g('leave'),P=g('parental');
  const sh=aoa=>{const w=X.utils.aoa_to_sheet(aoa);w['!cols']=aoa[0].map(()=>({wch:24}));return w};
- const s1=sh([['항목','내용'],['직원명',i.name||''],['부서',i.dept||''],['기업 유형',i.corp],['출산예정일',dt(i.edd)],['실제 출산일',i.birth?dt(i.birth):''],['임신 유형',i.multiple?'다태아':'단태아'],
+ const s1=sh([['항목','내용'],['직원명',i.name||''],['부서',i.dept||''],['출산예정일',dt(i.edd)],['실제 출산일',i.birth?dt(i.birth):''],['임신 유형',i.multiple?'다태아':'단태아'],
   ['출산전후휴가 기간',`${L.start} ~ ${L.end} (${L.days}일)`],['육아휴직 기간',`${P.start} ~ ${P.end}`],['전체 일정 종료일',dt(r.end)],['※ 경고/확인사항',r.warnings.join(' / ')]]);
  const s2=sh([['구분','시작일','종료일','기간(일)','자동/수동','적용 제도·근거','비고'],...r.rows.map(x=>[x.label,dt(x.start),dt(x.end),x.days,x.manual?'수동 수정':'자동',x.basis,x.note||''])]);
  const s3=sh([['업무 카테고리','업무명','상세 내용','예정일','완료','참고 링크'],...items.map(x=>[x.cat,x.name,x.desc,dt(x.o.date||x.auto),x.o.done?'완료':'미완료',x.link])]);
