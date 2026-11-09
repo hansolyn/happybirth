@@ -32,8 +32,7 @@ function draw(){const items=cur.items;items.sort((a,b)=>eff(a).localeCompare(eff
  $('#cl').innerHTML=`<table><tr><th>완료</th><th>분류</th><th>업무</th><th>예정일(내부 목표)</th><th>근거</th></tr>`+items.map((x,n)=>`<tr${x.o.done?' style="opacity:.55"':''}><td><input type=checkbox data-c="${n}" data-f=done${x.o.done?' checked':''}></td><td>${x.cat}</td><td><b>${esc(x.name)}</b><br><span class=note>${esc(x.desc)}</span></td><td><input type=date data-c="${n}" data-f=date value="${eff(x)}"></td><td>${x.link?`<a href="${x.link}" target=_blank rel=noopener>링크</a>`:''}</td></tr>`).join('')+'</table>';
  $('#cl').onchange=e=>{const d=e.target.dataset;if(d.c==null)return;const it=items[d.c];if(d.f==='done'){it.o.done=e.target.checked;draw()}else if(D.valid(e.target.value)){it.o.date=e.target.value;draw()}}}
 M.hr={
- init(render){$('#hrf').innerHTML=`<label>직원명<input id=name></label><label>부서<input id=dept></label>
-  <label>기업 유형*<select id=corp><option>우선지원대상기업</option><option>그 외</option></select></label>`;
+ init(render){$('#hrf').innerHTML=`<label>직원명<input id=name></label><label>부서<input id=dept></label>`;$('#hrf2').innerHTML=`<label>기업 유형*<select id=corp><option>우선지원대상기업</option><option>그 외</option></select></label>`;
   $('#hrx').innerHTML=`<button class=or id=xl>엑셀 다운로드</button>`;
   $('#xl').onclick=()=>M.excel(cur);['name','dept','corp'].forEach(id=>$('#'+id).addEventListener('change',()=>$('#res').hidden||render()))},
  read:()=>({name:$('#name').value,dept:$('#dept').value,corp:$('#corp').value}),
