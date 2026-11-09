@@ -2,7 +2,7 @@
 (function(){const M=window.MP,D=M.date,$=s=>document.querySelector(s),
 esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
 dd=s=>String(s).replace(/(\d{4})-(\d\d)-(\d\d)/g,'$1.$2.$3');   // 화면 표시용 2026.10.13 형식
-const st={ov:{},cur:null},COL={sEarly:'#5C7CFA',sLate:'#4263EB',sAll:'#4263EB',leave:'#364FC7',parental:'#2B8A63'};
+const st={ov:{},cur:null},COL={sEarly:'#E8890C',sLate:'#D9480F',sAll:'#D9480F',leave:'#364FC7',parental:'#2B8A63'};
 const MAP={sEarly:['sEarlyS','sEarlyE'],sLate:['sLateS','sLateE'],sAll:['sAllS','sAllE'],leave:['lStart','lEnd'],parental:['pStart','pEnd']};
 const v=id=>$('#'+id).value,c=id=>$('#'+id).checked;
 const collect=()=>({edd:v('edd'),birth:v('birth'),multiple:v('multiple')==='1',premature:c('prem'),highRisk:c('hr'),
