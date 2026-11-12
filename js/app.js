@@ -12,7 +12,7 @@ function render(){const i=collect(),r=M.calc(i,st.ov);st.cur={i,r};
  if(!r.ok){alert(r.warnings[0]);return}
  if($('#res').hidden)show(true);
  const L=r.rows.find(x=>x.key==='leave'),P=r.rows.find(x=>x.key==='parental');
- {const t=[M.hr&&i.name?i.name:'',i.multiple?'다태아':''].filter(Boolean).join(' · ');$('#rs').textContent=t;$('#rs').hidden=!t}
+ {const who=M.hr?[i.dept?`<span class=rs-d>${esc(i.dept)}</span>`:'',i.name?`<b class=rs-n>${esc(i.name)}</b>`:''].filter(Boolean).join(''):'',t=who+(i.multiple?`<span class=rs-t>다태아</span>`:'');$('#rs').innerHTML=t;$('#rs').hidden=!t}
  const hb=D.valid(i.birth);
  const linked=P.start===D.add(L.end,1);
  $('#sum').innerHTML=[[hb?'실제 출산일':'출산예정일',dd(hb?i.birth:i.edd),'입력 기준'],['출산전후휴가',`${dd(L.start)} ~ ${dd(L.end)}`,L.days+'일'],

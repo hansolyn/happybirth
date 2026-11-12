@@ -38,6 +38,8 @@ button.mini{height:34px;padding:0 16px;font-size:13px}
 /* 결과 상단 */
 .rhead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:24px}
 .rhead h1{margin-bottom:8px}.rhead .lead{margin:0}
+#rs{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:17px;color:var(--tx);margin-top:4px}#rs[hidden]{display:none}
+.rs-d{color:var(--tx2);font-weight:600}.rs-n{font-weight:800;font-size:18px}.rs-t{font-size:13px;font-weight:700;color:var(--acc);background:#EDF2FF;border-radius:999px;padding:3px 10px}
 .ract{display:flex;gap:8px;flex-wrap:wrap}
 .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:16px}
 .sc{background:#fff;border:1px solid var(--bd);border-radius:var(--r);padding:18px 20px}
