@@ -42,6 +42,11 @@ document.addEventListener('click',e=>{const k=e.target.closest('[data-k]');if(k)
 $('#go').onclick=()=>{st.ov={};render()};
 $('#back').onclick=()=>show(false);
 $('#reset').onclick=()=>{st.ov={};['edd','birth','name','dept'].forEach(id=>{if($('#'+id))$('#'+id).value=''});$('#multiple').value='0';$('#months').value='12';
- $('#prem').checked=false;$('#hr').checked=false;$('#linked').checked=true;if($('#corp'))$('#corp').selectedIndex=0};
+ $('#prem').checked=false;$('#hr').checked=false;$('#linked').checked=true;if(M.hr&&M.hr.setCl)M.hr.setCl({})};
+// HR 저장/불러오기(hr-storage.js)에서 쓰는 최소 연결점
+M.app={inputs:collect,ov:()=>JSON.parse(JSON.stringify(st.ov)),
+ load(inp,ov,after){$('#reset').onclick();if(after)after();const set=(id,val)=>{if($('#'+id)&&val!=null)$('#'+id).value=val};
+  ['edd','birth','months','name','dept'].forEach(k=>set(k,inp[k]));$('#multiple').value=inp.multiple?'1':'0';
+  $('#prem').checked=!!inp.premature;$('#hr').checked=!!inp.highRisk;$('#linked').checked=inp.linked!==false;st.ov=ov||{};render()}};
 if(M.hr)M.hr.init(render);
 $('#upd').textContent='최종 업데이트 '+M.REG.updated.replace(/-/g,'.');})();

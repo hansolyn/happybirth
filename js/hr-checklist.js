@@ -41,4 +41,5 @@ M.hr={
   <li>임신기 단축 개정(2025.2.23.) 안내 — <a href="${R.law.shortUrl}" target=_blank rel=noopener>정책브리핑</a></li><li>미숙아 범위 — ${esc(R.law.prem)}</li>
   <li><a href="https://www.work24.go.kr/cm/c/f/1100/selecPolicyList.do?concTrgtSecd=EBQ04&systClId=SC00000033&currentPageNo=1&recordCountPerPage=9#none" target=_blank rel=noopener>고용24 정책/제도 안내</a></li>
   <li>급여 상한액·지원금 금액·4대 보험 신고기한은 고시·공단 안내가 수시 변경되므로 이 도구에 고정하지 않았습니다. <a href="${R.law.moel}" target=_blank rel=noopener>고용노동부</a> 및 각 보험 공단 최신 안내 확인.</li></ul>`}};
-M.hrItems=()=>cur;})();
+M.hrItems=()=>cur;
+M.hr.getCl=()=>JSON.parse(JSON.stringify(cl));M.hr.setCl=o=>{Object.keys(cl).forEach(k=>delete cl[k]);Object.entries(o||{}).forEach(([k,v])=>cl[k]={done:!!v.done,date:D.valid(v.date)?v.date:null})};})();
